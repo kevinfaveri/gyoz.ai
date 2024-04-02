@@ -1,3 +1,76 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 240 27% 10%;
+    --foreground: 0 0% 90%;
+    --card: 240 27% 14%;
+    --card-foreground: 0 0% 90%;
+    --popover: 240 27% 14%;
+    --popover-foreground: 0 0% 90%;
+    --primary: 280 100% 30%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 100% 30%;
+    --secondary-foreground: 0 0% 100%;
+    --tertiary: 310 100% 40%;
+    --tertiary-foreground: 0 0% 100%;
+    --quaternary: 180 100% 30%;
+    --quaternary-foreground: 0 0% 100%;
+    --quinary: 15 100% 40%;
+    --quinary-foreground: 0 0% 100%;
+    --senary: 130 100% 30%;
+    --senary-foreground: 0 0% 100%;
+    --muted: 240 27% 16%;
+    --muted-foreground: 0 0% 70%;
+    --accent: 198 93% 60%;
+    --accent-foreground: 240 27% 10%;
+    --destructive: 354 81% 56%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 240 27% 16%;
+    --input: 240 27% 16%;
+    --ring: 280 100% 30%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 0 0% 96%;
+    --foreground: 240 27% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 27% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 27% 10%;
+    --primary: 280 100% 50%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 100% 70%;
+    --secondary-foreground: 240 27% 10%;
+    --tertiary: 310 100% 70%;
+    --tertiary-foreground: 240 27% 10%;
+    --quaternary: 180 100% 50%;
+    --quaternary-foreground: 240 27% 10%;
+    --quinary: 15 100% 40%;
+    --quinary-foreground: 0 0% 100%;
+    --senary: 130 100% 30%;
+    --senary-foreground: 0 0% 100%;
+    --muted: 248 29% 83%;
+    --muted-foreground: 240 27% 10%;
+    --accent: 198 93% 60%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 354 81% 56%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 240 27% 90%;
+    --input: 240 27% 90%;
+    --ring: 280 100% 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}

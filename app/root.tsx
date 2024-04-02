@@ -1,5 +1,6 @@
 import { cssBundleHref } from "@remix-run/css-bundle";
-import type { LinksFunction } from "@remix-run/node";
+import type { LinksFunction, LoaderFunctionArgs } from "@remix-run/node";
+import { json } from "@remix-run/node";
 import {
   Links,
   LiveReload,
@@ -7,29 +8,62 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLoaderData,
 } from "@remix-run/react";
+
 import styles from "./tailwind.css";
+import {
+  ThemeBody,
+  ThemeHead,
+  ThemeProvider,
+  useTheme,
+} from "~/utils/theme-provider";
+import { getThemeSession } from "~/utils/theme.server";
+import { twMerge } from "tailwind-merge";
+
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  const themeSession = await getThemeSession(request);
+
+  return json({
+    theme: themeSession.getTheme(),
+  });
+};
 
 export const links: LinksFunction = () => [
   ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
   { rel: "stylesheet", href: styles },
 ];
 
-export default function App() {
+function App() {
+  const data = useLoaderData<typeof loader>();
+  const [theme] = useTheme();
+
   return (
-    <html lang="en">
+    <html lang="en" className={twMerge(theme ?? "", "transition-colors duration-500")}>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
         <Meta />
         <Links />
+        <ThemeHead ssrTheme={Boolean(data.theme)} />
       </head>
       <body>
         <Outlet />
+        <ThemeBody ssrTheme={Boolean(data.theme)} />
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
       </body>
     </html>
+  );
+}
+
+export default function AppWithProviders() {
+  const data = useLoaderData<typeof loader>();
+
+  return (
+    <ThemeProvider specifiedTheme={data.theme}>
+      <App />
+    </ThemeProvider>
   );
 }
