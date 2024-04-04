@@ -16,14 +16,6 @@ const buttonVariants = cva(
           "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
         secondary:
           "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
-        tertiary:
-          "bg-tertiary text-tertiary-foreground shadow-sm hover:bg-tertiary/80",
-        quaternary:
-          "bg-quaternary text-quaternary-foreground shadow-sm hover:bg-quaternary/80",
-        quinary:
-          "bg-quinary text-quinary-foreground shadow-sm hover:bg-quinary/80",
-        senary:
-          "bg-senary text-senary-foreground shadow-sm hover:bg-senary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
       },

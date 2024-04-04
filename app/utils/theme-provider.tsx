@@ -53,7 +53,6 @@ function ThemeProvider({
   })
 
   const persistTheme = useFetcher()
-  // TODO: remove this when persistTheme is memoized properly
   const persistThemeRef = useRef(persistTheme)
   useEffect(() => {
     persistThemeRef.current = persistTheme
@@ -100,7 +99,6 @@ const clientThemeCode = `
   const cl = document.documentElement.classList;
   const themeAlreadyApplied = cl.contains('light') || cl.contains('dark');
   if (themeAlreadyApplied) {
-    // this script shouldn't exist if the theme is already applied!
     console.warn(
       "Hi there, could you let me know you're seeing this message? Thanks!",
     );

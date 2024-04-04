@@ -19,7 +19,6 @@ import {
   useTheme,
 } from "~/utils/theme-provider";
 import { getThemeSession } from "~/utils/theme.server";
-import { twMerge } from "tailwind-merge";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const themeSession = await getThemeSession(request);
@@ -39,7 +38,7 @@ function App() {
   const [theme] = useTheme();
 
   return (
-    <html lang="en" className={twMerge(theme ?? "", "transition-colors duration-500")}>
+    <html lang="en" className={theme ?? ""}>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -47,7 +46,7 @@ function App() {
         <Links />
         <ThemeHead ssrTheme={Boolean(data.theme)} />
       </head>
-      <body>
+      <body className="transition-colors duration-300">
         <Outlet />
         <ThemeBody ssrTheme={Boolean(data.theme)} />
         <ScrollRestoration />
