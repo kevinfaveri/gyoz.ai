@@ -4,21 +4,17 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from '../ui/command'
+} from '../../ui/command'
 import { useQuickActions } from './useQuickActions'
 
-interface ActionBarProps {
-  // Add any necessary props here
-}
-
-const ActionBar: React.FC<ActionBarProps> = (props) => {
+const ActionBar = () => {
   const [command, setCommand] = React.useState('')
   const filterFnCB = React.useCallback(
     (value: string, search: string, keywords?: string[]) => {
       const joinedKeywords = keywords?.join(' ') || ''
       if (joinedKeywords.startsWith('ask-ai')) return 1
       const extendValue = value.toLowerCase() + ' ' + joinedKeywords.toLowerCase()
-      if (extendValue.startsWith(search)) return 1
+      if (extendValue.includes(search)) return 1
       return 0
     },
     []
@@ -27,12 +23,12 @@ const ActionBar: React.FC<ActionBarProps> = (props) => {
   const quickActions = useQuickActions(setCommand);
 
   return (
-    <div className="absolute bottom-5 w-full flex justify-center">
+    <div className="absolute bottom-0 w-full flex justify-center">
       <Command
-        className="rounded-lg border shadow-md w-[calc(40%)]"
+        className="rounded-lg border-l border-t border-r w-[70%] shadow-inner shadow-primary"
         filter={filterFnCB}
       >
-        <CommandList hidden={command.length === 0}>
+        <CommandList hidden={command.length === 0} className="border-b border-dotted py-1">
           {quickActions}
           <CommandItem
             keywords={['ask-ai']}
@@ -43,7 +39,7 @@ const ActionBar: React.FC<ActionBarProps> = (props) => {
           </CommandItem>
         </CommandList>
         <CommandInput
-          placeholder="Type your command..."
+          placeholder="Ask about something you want to do or information you need"
           autoFocus
           value={command}
           onValueChange={setCommand}

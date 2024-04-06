@@ -1,5 +1,6 @@
 import type { MetaFunction } from "@remix-run/node";
 import ActionBar from "~/components/features/actionbar";
+import Topbar from "~/components/features/topbar";
 
 export const meta: MetaFunction = () => {
   return [
@@ -11,6 +12,7 @@ export const meta: MetaFunction = () => {
 export default function Index() {
   return (
     <div>
+      <Topbar />
       <ActionBar />
     </div>
   );
