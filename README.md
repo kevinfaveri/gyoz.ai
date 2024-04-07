@@ -37,7 +37,7 @@ P1 10 - Move tools rather than be static, to the backend. And then allow user to
 
 P1 11 - Extra: add gimmicks like sidebar to show a youtube music integration or something; etc...
 
-P1 12 - 
+P1 12 - For stuff completely out of what fallbackChat can do, it might suggest a google direct search query, fully optimized to find the exact result you want to read
 
 ### (Specialist) Interpreters P1
 
