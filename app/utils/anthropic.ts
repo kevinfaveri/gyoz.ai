@@ -22,7 +22,7 @@ export async function callAnthropicAPITools(
 
   const msg = await anthropic.beta.tools.messages.create(
     {
-      model: MODELS.sonnet,
+      model: MODELS.haiku,
       max_tokens: 1024,
       system: systemPrompt,
       messages: [{ role: 'user', content: prompt }],
@@ -31,7 +31,7 @@ export async function callAnthropicAPITools(
         user_id: 'system_os',
       },
       tools,
-      temperature: 0.1,
+      temperature: 0,
     },
   )
 
