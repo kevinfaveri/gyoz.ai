@@ -1,74 +1,23 @@
-import { Theme } from '~/utils/theme-provider'
-import type { AgentAction } from '../types'
+import { Theme } from '~/providers/theme-provider'
+import type { Tool } from '@anthropic-ai/sdk/resources/beta/tools/messages'
 
-// For building the brain, check agent.ts
-export const UI_ACTIONS_AGENT_BRAIN: AgentAction[] = [
+export const UI_ACTIONS_AGENT_BRAIN: Tool[] = [
   {
-    name: 'Change Website Theme',
-    description: 'Change the website theme between dark and light',
-    examplePrompts: [
-      'Change the website theme to dark',
-      'Change the website theme to light',
-      'Change the website theme',
-      'Change the theme to dark',
-      'Change the theme to light',
-      'Change the theme',
-    ],
-    action: {
-      function: 'changeWebsiteTheme',
-      args: [[Theme.LIGHT, Theme.LIGHT]],
+    name: 'uiActionsAgent_changeWebsiteTheme',
+    description: `This tool allows you to change the color scheme of the website between a dark theme and a light theme. The dark theme uses darker colors for the background and lighter colors for the text, creating a low-light environment suitable for nighttime or low-light conditions. The light theme uses brighter colors for the background and darker colors for the text, creating a more vibrant and energetic feel.
+      To use this tool, provide the desired theme as the 'theme' input, selecting either "dark" or "light", or extremely similar colors (like black and white, respectively). The tool will then apply the corresponding color palette to the website, updating the background, text, and other UI elements accordingly.
+      However, before using this tool, you should check the 'activeTheme' from APP_CONTEXT to determine if the requested theme is already active. If the 'activeTheme' matches the requested 'theme', there is no need to use this tool. Instead, use the 'fallbackAgent_fallbackChat' tool to inform the user that their requested theme is already active.
+      It's important to note that this tool only affects the color scheme and does not alter the layout, content, or functionality of the website.`,
+    input_schema: {
+      type: 'object',
+      properties: {
+        theme: {
+          type: 'string',
+          enum: [Theme.DARK, Theme.LIGHT],
+          description: `The desired color scheme for the website. Must be one of the available themes: "${Theme.DARK}" for a low-light theme or "${Theme.LIGHT}" for a bright and vibrant theme.`,
+        },
+      },
+      required: ['theme'],
     },
   },
-]
-
-export const UI_ACTION_AGENT_PROMPT =  `
-<Agent>
-  <Name>uiActionsAgent</Name>
-  <Description>
-  The UI Action Agent is designed to assist users in performing various actions on a website's user interface by selecting the most appropriate AgentAction based on the user's request.
-  </Description>
-
-  <Inputs>
-  $ACTIONS_AGENT_BRAIN=${JSON.stringify(UI_ACTIONS_AGENT_BRAIN, null, 2)}
-  </Inputs>
-
-  <Instructions>
-  You are the UI Action Agent, an AI assistant that helps users perform actions on a website's user interface. Here are a couple examples:
-
-  <example>
-  User request: Switch to a bright theme
-  <thinkingsteps>
-  1. Keywords: switch, bright, theme. Intent: change the theme to a light color scheme.
-  2. The "Change Website Theme" action matches this intent.
-  3. Only one matching action, so no need to choose between multiple.
-  4. The user wants a "bright" theme, which maps to the "light" theme option.
-  </thinkingsteps>
-  <response>
-  {
-    "agentObjectName": "uiActionsAgent",
-    "function": "changeWebsiteTheme",
-    "args": ["light"],
-    "userRequest": "$USER_REQUEST"
-  } 
-  </response>
-  </example>
-
-  <example>
-  User request: I prefer darker colors
-  <thinkingsteps>
-  1. Keywords: prefer, darker, colors. Intent: change to a dark color scheme.
-  2. The "Change Website Theme" action matches.
-  3. Only one matching action.
-  4. User prefers "darker colors", so the "dark" theme should be selected.
-  </thinkingsteps>
-  <response>
-  {
-    "agentObjectName": "uiActionsAgent",
-    "function": "changeWebsiteTheme", 
-    "args": ["dark"],
-    "userRequest": "$USER_REQUEST"
-  }
-  </response>
-  </example>
-  </Instructions>
-</Agent>`
+];

@@ -5,6 +5,7 @@ import morgan from "morgan";
 import { createRequestHandler, type RequestHandler } from "@remix-run/express";
 import { broadcastDevReady, installGlobals } from "@remix-run/node";
 import sourceMapSupport from "source-map-support";
+import cors from "cors";
 
 // patch in Remix runtime globals
 installGlobals();
@@ -44,6 +45,8 @@ app.use(
 app.use(express.static("public", { maxAge: "1h" }));
 
 app.use(morgan("tiny"));
+
+app.use(cors());
 
 // Check if the server is running in development mode and use the devBuild to reflect realtime changes in the codebase.
 app.all(

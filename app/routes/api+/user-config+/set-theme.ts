@@ -1,10 +1,10 @@
 import { json, redirect } from '@remix-run/node'
 import type { ActionFunctionArgs } from '@remix-run/node'
-import { isTheme } from '~/utils/theme-provider'
+import { isTheme } from '~/providers/theme-provider'
 import { getThemeSession } from '~/utils/theme.server'
 
 export const action = async ({ request }: ActionFunctionArgs) => {
-  const themeSession = await getThemeSession(request)
+  const themeSession = await getThemeSession(request.headers.get('Cookie'))
   const requestText = await request.text()
   const form = new URLSearchParams(requestText)
   const theme = form.get('theme')

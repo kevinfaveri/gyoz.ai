@@ -5,6 +5,7 @@ import { Command as CommandPrimitive } from 'cmdk'
 
 import { cn } from 'app/utils/shad'
 import { Dialog, DialogContent } from 'app/components/ui/dialog'
+import Loading from './loading'
 
 const Command = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive>,
@@ -38,19 +39,31 @@ const CommandDialog = ({ children, ...props }: CommandDialogProps) => {
 const CommandInput = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive.Input>,
   React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>
->(({ className, ...props }, ref) => (
-  <div className="flex items-center px-3 mb-10 mt-1" cmdk-input-wrapper="">
-    <MagnifyingGlassIcon className="mr-2 h-4 w-4 shrink-0 opacity-50" />
-    <CommandPrimitive.Input
-      ref={ref}
-      className={cn(
-        'flex h-10 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50',
-        className
+>(({ className, ...props }, ref) => {
+  return (
+    <div
+      className="relative flex items-center px-3 mb-10 mt-5"
+      cmdk-input-wrapper=""
+    >
+      <MagnifyingGlassIcon className="mr-2 h-4 w-4 shrink-0 opacity-50" />
+      <CommandPrimitive.Input
+        ref={ref}
+        className={cn(
+          'flex h-10 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50',
+          className
+        )}
+        data-disabled={props.disabled}
+        aria-disabled={props.disabled}
+        {...props}
+      />
+      {props.disabled && (
+        <div className="absolute right-5 top-0">
+          <Loading />
+        </div>
       )}
-      {...props}
-    />
-  </div>
-))
+    </div>
+  )
+})
 
 CommandInput.displayName = CommandPrimitive.Input.displayName
 

@@ -1,6 +1,6 @@
 export function useFallbackActionsAgent() {
   return {
-    searchWeb: (userRequest: string) => {
+    searchCryptoWeb: (url: string) => {
       // TODO: Fetch the HTML from the page; have LLM interpreter parse it and answer
     },
     explainCryptoStuff: (userRequest: string) => {

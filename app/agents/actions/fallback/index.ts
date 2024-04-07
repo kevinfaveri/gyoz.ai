@@ -1,117 +1,55 @@
-import type { AgentAction } from "../types"
+import type { Tool } from '@anthropic-ai/sdk/resources/beta/tools/messages'
 
-export const FALLBACK_ACTIONS_AGENT_BRAIN: AgentAction[] = [
+export const FALLBACK_ACTIONS_AGENT_NAME: Tool[] = [
   {
-    name: 'Search Web',
-    description: 'Search the web for the provided URL',
-    examplePrompts: [
-      'Search https://solana.com for information',
-      'Open https://solscan.io in a new tab',
-    ],
-    action: {
-      function: 'searchWeb',
-      args: [],
+    "name": "fallbackAgent_searchCryptoWeb",
+    "description": `This tool allows you to open a specified URL related to cryptocurrencies or blockchain technology in a web browser and search for information within that website. It is useful when the user wants to find specific content or explore a particular crypto-related website.
+      To use this tool, provide the target URL as a string in the 'url' parameter. The tool will navigate to the given URL and load the website in the browser. If the URL is not explicitly related to cryptocurrencies or blockchain but can be inferred to be crypto-related, consider it valid and proceed with the search.
+      However, if the provided URL is known to be unrelated to cryptocurrencies or blockchain, do not use this tool. Instead, use the 'fallbackAgent_fallbackChat' tool to inform the user that the requested website is not crypto-related and suggest exploring crypto-specific websites instead.
+      This tool is only suited for scenarios where the user has explicitly mentioned a URL they want to search or explore within the context of cryptocurrencies or blockchain. It should not be used for general web searches without a specified website, as it does not have the capability to search the entire internet or determine the most relevant websites for a given query.
+      When using this tool, ensure that the provided URL is valid, accessible, and related to cryptocurrencies or blockchain technology.`,
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "The target URL of the crypto-related website to open and search within. It should be a valid and accessible URL, starting with 'https://'. If the URL is not explicitly crypto-related but can be inferred to be relevant to cryptocurrencies or blockchain, consider it valid. If the URL is known to be unrelated to crypto, do not use this tool and instead use 'fallbackAgent_fallbackChat' to inform the user."
+        }
+      },
+      "required": ["url"]
+    }
+  },
+  {
+    name: 'fallbackAgent_explainCryptoStuff',
+    description:
+      "This tool is designed to provide explanations and information about various cryptocurrency concepts, with a focus on the cryptocurrency ecosystem. It can help users understand the basics of cryptocurrency, its unique features, and how it differs from other blockchain platforms. The tool can also delve into more specific topics related to cryptocurrency, such as its native tokens, staking mechanisms, consensus algorithm, and the ecosystem of projects built on top of it. Additionally, it can provide insights into cryptocurrency-based NFTs (non-fungible tokens), explaining how they work, their benefits, and popular NFT projects on the cryptocurrency blockchain. When a user asks a question related to cryptocurrencies or blockchain technology this tool can be used to provide clear, concise, and informative explanations. However, it's important to note that the tool's knowledge is restricted to the cryptocurrency ecosystem and general crypto concepts. It must be focused, however, on cryptocurrency and blockchain concepts, not delving into explaining stuff about stocks that happen to be in the cryptocurrencies / blockchain space, rather focusing on teaching users about cryptocurrencies / blockchain technicals. The 'topic' parameter should provide a concise description of the user query for it to be sent to a LLM model that is a specialist in the field of cryptocurrency.",
+    input_schema: {
+      type: 'object',
+      properties: {
+        topic: {
+          type: 'string',
+          description:
+            'The cryptocurrency or blockchain-related topic to explain. It should be a concept or term or phrase related to the cryptocurrency ecosystem or general crypto concepts.',
+        },
+      },
+      required: ['topic'],
     },
   },
   {
-    name: 'Explain Crypto Stuff',
-    description: 'Explain cryptocurrency concepts related to Solana',
-    examplePrompts: [
-      'What is Solana?',
-      'How do Solana NFTs work?',
-      'Explain Solana staking',
-    ],
-    action: {
-      function: 'explainCryptoStuff',
-      args: [],
-    },
-  },
-  {
-    name: 'Not Supported',
-    description: 'Respond that the request is not supported',
-    examplePrompts: [
-      'Book me a flight to New York',
-      'What is the weather forecast for tomorrow?',
-      'Tell me a joke',
-    ],
-    action: {
-      function: 'notSupported',
-      args: [],
+    name: 'fallbackAgent_fallbackChat',
+    description:
+      "This tool is used to provide a user-friendly response to the user when their request cannot be directly accomplished with the available tools or requires additional information or context. The 'userFriendlyMessage' parameter should contain a clear, concise, and easy-to-understand message that addresses the user's query or explains why their request cannot be fulfilled. If applicable, briefly mention the available actions or options, but focus on providing a direct answer to the user's query. Don't mention tool names, variable names, your possible capabilities in details, or other technical details that may confuse the user. Keep the response short and to the point, while still being informative and helpful.",
+    input_schema: {
+      type: 'object',
+      properties: {
+        // It may support building blocks in the future here to build an UI with other actions by returning a payload of information, and simple building blocks it could use.
+        userFriendlyMessage: {
+          type: 'string',
+          description:
+            "A clear, concise, and user-friendly response to the user's request or query, following the specified guidelines.",
+        },
+      },
+      required: ['userFriendlyMessage'],
     },
   },
 ]
-
-export const FALLBACK_ACTION_AGENT_PROMPT = `
-<Agent>
-  <Name>fallbackActionsAgent</Name>
-  <Description>
-  The Fallback Action Agent handles cryptocurrency and NFT-related prompts, specifically for Solana, by selecting the most appropriate AgentAction based on the user's request.
-  </Description>
-
-  <Inputs>
-  $ACTIONS_AGENT_BRAIN=${JSON.stringify(FALLBACK_ACTIONS_AGENT_BRAIN, null, 2)}
-  </Inputs>
-
-  <Instructions>
-  You are the Fallback Action Agent, an AI assistant that helps users with Solana-related tasks. Follow these steps:
-
-  <thinkingsteps>
-  1. Identify keywords and intent in the user's request.
-  2. Find AgentActions that match the keywords and intent.
-  3. If no AgentActions match, respond that the request is not supported.
-  4. If an AgentAction matches, determine the arguments based on the user's request.
-  </thinkingsteps>
-
-  <example>
-  User request: Search https://solana.com for information about the blockchain
-  <thinkingsteps>
-  1. Keywords: search, https://solana.com, blockchain. Intent: search a specific URL for information.
-  2. The "Search Web" action matches this intent.
-  3. The URL argument is "https://solana.com".
-  </thinkingsteps>
-  <response>
-  {
-    "agentObjectName": "fallbackActionsAgent",
-    "function": "searchWeb",
-    "args": [],
-    "userRequest": "$USER_REQUEST"
-  }
-  </response>
-  </example>
-
-  <example>
-  User request: What are Solana NFTs and how do they work?
-  <thinkingsteps>
-  1. Keywords: Solana NFTs, how they work. Intent: explain Solana NFTs.
-  2. The "Explain Crypto Stuff" action matches this intent.
-  3. The explanation argument should cover what Solana NFTs are and how they function.
-  </thinkingsteps>
-  <response>
-  {
-    "agentObjectName": "fallbackActionsAgent",
-    "function": "explainCryptoStuff",
-    "args": [],
-    "userRequest": "$USER_REQUEST"  
-  }
-  </response>
-  </example>
-
-  <example>
-  User request: What's the current price of Bitcoin?
-  <thinkingsteps>
-  1. Keywords: price, Bitcoin. Intent: get Bitcoin price information.
-  2. No AgentActions match this intent, as it's not specific to Solana.
-  3. Respond that the request is not supported.
-  </thinkingsteps>
-  <response>
-  {
-    "agentObjectName": "fallbackActionsAgent",
-    "function": "notSupported",
-    "args": [],
-    "userRequest": "$USER_REQUEST"
-  }
-  </response>
-  </example>
-  </Instructions>
-</Agent>
-`

@@ -17,11 +17,11 @@ import {
   ThemeHead,
   ThemeProvider,
   useTheme,
-} from "~/utils/theme-provider";
+} from "~/providers/theme-provider";
 import { getThemeSession } from "~/utils/theme.server";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const themeSession = await getThemeSession(request);
+  const themeSession = await getThemeSession(request.headers.get("Cookie"));
 
   return json({
     theme: themeSession.getTheme(),

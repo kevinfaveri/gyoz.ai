@@ -1,5 +1,5 @@
 import { GearIcon, MoonIcon, SunIcon } from '@radix-ui/react-icons'
-import { Theme, Themed, useTheme } from '~/utils/theme-provider'
+import { Theme, Themed, useTheme } from '~/providers/theme-provider'
 import { CommandItem, CommandGroup } from '../../ui/command'
 
 export function useQuickActions(setCommand: (command: string) => void) {
