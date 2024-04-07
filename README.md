@@ -4,6 +4,7 @@ Gyoza OS is an intelligent assistant / quick actions tools that can help you und
 
 ### Actions focused agents and tools integration P0
 BUGFIX: Check OLD_PROMPT_WITH_EXAMPLES and do as it is told there.
+BUGFIX: Disable actions list if it is loading a from Gyoza OS.
 1 - Add LLM Integration endpoint with claude and actions agents mega prompt 
 -> On LLM Integration, do the example creation method to improve Haiku performance. Can have a script that creates the "examples" by iterating with a set of prompts against Opus, and then feeds into some variables that get imported as examples.
 -> This is P0 to ensure Haiku max performance
