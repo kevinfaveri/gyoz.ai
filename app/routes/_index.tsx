@@ -13,7 +13,7 @@ import { getThemeSession } from '~/utils/theme.server'
 
 export const meta: MetaFunction = () => {
   return [
-    { title: 'GyozAI' },
+    { title: 'Gyoza OS' },
     {
       name: 'description',
       content: 'Chat around, find out. Defi made simple.',

@@ -57,7 +57,7 @@ const ActionBar = () => {
           {quickActions}
           <CommandItem keywords={['ask-ai']} onSelect={handleSubmit} className="mx-1">
             <span className="mr-2 h-4 w-4">🥟</span>
-            <span>Talk to GyozAI</span>
+            <span>Talk to Gyoza OS</span>
           </CommandItem>
         </CommandList>
         <fetcher.Form method="post" ref={formRef}>
