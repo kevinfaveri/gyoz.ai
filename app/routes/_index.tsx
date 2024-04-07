@@ -54,7 +54,7 @@ export async function action({ request }: ActionFunctionArgs) {
   if (!response) {
     return json({ error: 'Failed to fetch LLM data' }, { status: 500 })
   }
-  console.log(response.content)
+  console.log(JSON.stringify(response))
   return json({ output: '' })
 }
 

@@ -3,6 +3,7 @@
 gyoz.ai is the Gyoza OS that, in other words, is an intelligent assistant / quick actions tools that can help you understand complex crypto, defi, blockchain concepts easily; abstracts different UIs available in defi to the same UI components (meaning you don't have to learn different UIs to trade an NFT, trade a coin or create a pool, just say and done); and more than anything, reduces the onboard bar to essentially anyone that can communicate in natural language.
 
 ### Actions focused agents and tools integration P0
+BUGFIX: Check OLD_PROMPT_WITH_EXAMPLES and do as it is told there.
 1 - Add LLM Integration endpoint with claude and actions agents mega prompt 
 -> On LLM Integration, do the example creation method to improve Haiku performance. Can have a script that creates the "examples" by iterating with a set of prompts against Opus, and then feeds into some variables that get imported as examples.
 -> This is P0 to ensure Haiku max performance

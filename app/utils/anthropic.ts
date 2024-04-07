@@ -22,7 +22,7 @@ export async function callAnthropicAPITools(
 
   const msg = await anthropic.beta.tools.messages.create(
     {
-      model: MODELS.opus,
+      model: MODELS.sonnet,
       max_tokens: 1024,
       system: systemPrompt,
       messages: [{ role: 'user', content: prompt }],
@@ -34,6 +34,8 @@ export async function callAnthropicAPITools(
       temperature: 0.1,
     },
   )
+
+  // TODO: Sometimes, the model may allucinate and put the tool inside a text. We should extract it.
 
   return msg
 }
