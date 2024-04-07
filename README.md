@@ -1,6 +1,6 @@
-# Crypto AI OS - gyoz.ai
+# Crypto Intelligent Assistant - Gyoza OS - gyoz.ai
 
-gyoz.ai is the Gyoza OS that, in other words, is an intelligent assistant / quick actions tools that can help you understand complex crypto, defi, blockchain concepts easily; abstracts different UIs available in defi to the same UI components (meaning you don't have to learn different UIs to trade an NFT, trade a coin or create a pool, just say and done); and more than anything, reduces the onboard bar to essentially anyone that can communicate in natural language.
+Gyoza OS is an intelligent assistant / quick actions tools that can help you understand complex crypto, defi, blockchain concepts easily; abstracts different UIs available in defi to the same UI components (meaning you don't have to learn different UIs to trade an NFT, trade a coin or create a pool, just say and done); and more than anything, reduces the onboard bar to essentially anyone that can communicate in natural language.
 
 ### Actions focused agents and tools integration P0
 BUGFIX: Check OLD_PROMPT_WITH_EXAMPLES and do as it is told there.
