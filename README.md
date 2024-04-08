@@ -13,6 +13,7 @@ BUGFIX: Make command list float above the chatbox
 BUGFIX: Put loading above, on the chatbox, when loading actions
 BUGFIX: Add background to topbar, correctly calculate chatbox size so scroll is correctly created
 BUGFIX: Brainstorm if spacing inside the chatbox makes sense at all
+BUGFIX: If there's punctuation, it should return it correctly with line breaks etc (but parse the messages before sending to the API to have less tokens using minify string)
 Add animation for chat messages appearing, some effect. Check accertenity.
 
 P0 - Add connect wallet quick action
