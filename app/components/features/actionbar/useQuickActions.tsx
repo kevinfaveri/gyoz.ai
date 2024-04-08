@@ -6,9 +6,9 @@ export function useQuickActions(setCommand: (command: string) => void) {
   const [, setTheme] = useTheme()
 
   const toggleTheme = () => {
-    setTheme((prevTheme) =>
-      prevTheme === Theme.LIGHT ? Theme.DARK : Theme.LIGHT
-    )
+    setTheme((prevTheme) => {
+      return prevTheme === Theme.LIGHT ? Theme.DARK : Theme.LIGHT
+    })
     setCommand('')
   }
 

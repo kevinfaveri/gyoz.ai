@@ -59,8 +59,8 @@ export function executeActionPayload(
 
   const isTextOnly = !toolUseBlock && textBlock
   if (isTextOnly) {
-    console.debug('Text only block found in the response', textBlock);
-    return;
+    console.debug('Text only block found in the response', textBlock)
+    return
     // Call the chat agent that talks to the user
   }
 
@@ -81,15 +81,22 @@ export function executeActionPayload(
   )
 }
 
+const ENABLE_DEBUG = true
+
 export const generateActionsPrompt = (appContext: string[]) =>
   minifyString(`Context: ${appContext.join(', ')}
 
-  Your actions are limited to the provided capabilities. You cannot perform any other functions.
+  Your actions are limited to the provided capabilities. 
+  You cannot perform any other functions.
+  ${
+    ENABLE_DEBUG
+      ? 'Before answering, explain your reasoning step-by-step in tags.'
+      : ''
+  }
   If the user's request does not match any available actions or is outside your scope as an action selection assistant, you should return a helpful message on a friendly tone and not too formal, being more casual while still being polite.
   
   You can't say you are an AI or an AI assistant. 
   You should always refer to yourself as Gyoza OS, an assistant designed to help users interact with various tools and actions within the Gyoza OS environment.
   Never used a prefix "Gyoza OS:" in your messages since the user is already aware they are interacting with Gyoza OS.
-
   Never talk about tools or actions, just perform them. If needed, talk about capabilities you have rather than naming specific parameters or tools.
 `)

@@ -1,4 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk'
+import type { MessageParam } from '@anthropic-ai/sdk/resources'
 import type { Tool } from '@anthropic-ai/sdk/resources/beta/tools/messages'
 
 const OPUS_MODEL = 'claude-3-opus-20240229'
@@ -19,19 +20,40 @@ export async function callAnthropicAPITools(
   const anthropic = new Anthropic({
     apiKey: process.env.ANTHROPIC_API_KEY,
   })
-  const msg = await anthropic.beta.tools.messages.create(
-    {
-      model: MODELS.haiku,
-      max_tokens: 1024,
-      system: systemPrompt,
-      messages: [{ role: 'user', content: prompt }],
-      metadata: {
-        // TODO: Change to use user wallet address
-        user_id: 'system_os',
-      },
-      tools,
-      temperature: 0,
+  const msg = await anthropic.beta.tools.messages.create({
+    model: MODELS.haiku,
+    max_tokens: 1024,
+    system: systemPrompt,
+    messages: [{ role: 'user', content: prompt }],
+    metadata: {
+      // TODO: Change to use user wallet address
+      user_id: 'system_os',
     },
-  )
+    tools,
+    temperature: 0,
+  })
   return msg
+}
+
+export async function callAnthropicAPIStream(
+  systemPrompt: string,
+  prompt: string,
+  messages: MessageParam[] = []
+) {
+  const anthropic = new Anthropic({
+    apiKey: process.env.ANTHROPIC_API_KEY,
+  })
+  const msg = await anthropic.messages.stream({
+    model: MODELS.haiku,
+    max_tokens: 1024,
+    system: systemPrompt,
+    messages: [...messages, { role: 'user', content: prompt }],
+    metadata: {
+      // TODO: Change to use user wallet address
+      user_id: 'system_os',
+    },
+    temperature: 0.5,
+    
+  })
+  return msg.toReadableStream()
 }

@@ -5,7 +5,6 @@ import { Command as CommandPrimitive } from 'cmdk'
 
 import { cn } from 'app/utils/shad'
 import { Dialog, DialogContent } from 'app/components/ui/dialog'
-import Loading from './loading'
 
 const Command = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive>,
@@ -56,11 +55,6 @@ const CommandInput = React.forwardRef<
         aria-disabled={props.disabled}
         {...props}
       />
-      {props.disabled && (
-        <div className="absolute right-5 top-0">
-          <Loading />
-        </div>
-      )}
     </div>
   )
 })

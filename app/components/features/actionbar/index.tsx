@@ -6,33 +6,12 @@ import {
   CommandList,
 } from '../../ui/command'
 import { useQuickActions } from './useQuickActions'
-import { useFetcher } from '@remix-run/react'
-import usePrevious from '~/hooks/usePrevious'
-import { executeActionPayload, useActionsAgents } from '~/agents/actions'
-import type { ToolsBetaContentBlock } from '@anthropic-ai/sdk/resources/beta/tools/messages'
+import { useChatState } from '~/hooks/useChatState'
+import { chatStream } from '~/clients/ai-inference'
 
 const ActionBar = () => {
-  const fetcher = useFetcher<{ output: ToolsBetaContentBlock[] }>()
-  const formRef = React.useRef(null)
-  const [isLoading, setIsLoading] = React.useState(false)
-  const isFetcherLoading = fetcher.state === 'loading'
-  const previousOutput = usePrevious(fetcher.data?.output)
-  const previousIsFetcherLoading = usePrevious(isFetcherLoading)
-  React.useEffect(() => {
-    // TODO: Find a successful fetched callback, maybe API endpoint
-    if (!isFetcherLoading && previousIsFetcherLoading) {
-      setCommand('')
-      setIsLoading(false)
-    }
-  }, [isFetcherLoading, previousIsFetcherLoading])
-
   const [command, setCommand] = React.useState('')
-  const handleSubmit = () => {
-    if (formRef.current) {
-      setIsLoading(true)
-      fetcher.submit(formRef.current)
-    }
-  }
+  const commandInputRef = React.useRef<HTMLInputElement>(null)
 
   const filterFnCB = React.useCallback(
     (value: string, search: string, keywords?: string[]) => {
@@ -48,24 +27,63 @@ const ActionBar = () => {
 
   const quickActions = useQuickActions(setCommand)
 
-  const actionAgents = useActionsAgents()
-  React.useEffect(() => {
-    // TODO: This effect is always triggered
-    if (
-      fetcher.data?.output &&
-      fetcher.state === 'idle'
-    ) {
-      executeActionPayload(
-        fetcher.data.output as ToolsBetaContentBlock[],
-        actionAgents
-      )
+  // const actionAgents = useActionsAgents()
+  // React.useEffect(() => {
+  //   // TODO: This effect is always triggered
+  //   if (fetcher.data?.output && fetcher.state === 'idle') {
+  //     executeActionPayload(
+  //       fetcher.data.output as ToolsBetaContentBlock[],
+  //       actionAgents
+  //     )
+  //   }
+  // }, [actionAgents, fetcher.data?.output, fetcher.state, previousOutput])
+
+  const {
+    messages,
+    addMessage,
+    addMessageAndReplaceLast,
+    isLoading,
+    setIsLoading,
+  } = useChatState()
+  const chatWithAIActions = async () => {
+    const prompt = command
+    setCommand('')
+    setIsLoading(true)
+    addMessage({ role: 'user', content: [{ type: 'text', text: prompt }] })
+    addMessage({ role: 'assistant', content: [{ type: 'text', text: '' }] })
+    const response = await chatStream({
+      prompt,
+      messages,
+      onChunk: (message) =>
+        addMessageAndReplaceLast({
+          role: 'assistant',
+          content: [{ type: 'text', text: message }],
+        }),
+    }).catch((error) => {
+      return null
+    })
+    if (!response) {
+      console.debug('Failed to fetch LLM data')
+      return
     }
-  }, [actionAgents, fetcher.data?.output, fetcher.state, previousOutput])
+
+    addMessageAndReplaceLast({
+      role: 'assistant',
+      content: [
+        {
+          type: 'text',
+          text: response,
+        },
+      ],
+    })
+    setIsLoading(false)
+    commandInputRef.current?.focus()
+  }
 
   return (
-    <div className="absolute bottom-0 w-full flex justify-center">
+    <div className="w-full flex justify-center">
       <Command
-        className="rounded-lg border-l border-t border-r w-[70%] shadow-inner shadow-primary"
+        className="rounded-lg border-l border-t border-r shadow-inner shadow-primary"
         filter={filterFnCB}
       >
         <CommandList
@@ -75,24 +93,22 @@ const ActionBar = () => {
           {quickActions}
           <CommandItem
             keywords={['ask-ai']}
-            onSelect={handleSubmit}
+            onSelect={chatWithAIActions}
             className="mx-1"
           >
             <span className="mr-2 h-4 w-4">🥟</span>
             <span>Talk to Gyoza OS</span>
           </CommandItem>
         </CommandList>
-        <fetcher.Form method="post" ref={formRef}>
-          <CommandInput
-            placeholder="Ask about something you want to do or information you need"
-            autoFocus
-            value={command}
-            onValueChange={setCommand}
-            name="prompt"
-            // TODO: Fix this, opacity not working as expected on this component
-            disabled={isLoading}
-          />
-        </fetcher.Form>
+        <CommandInput
+          ref={commandInputRef}
+          placeholder="Ask about something you want to do or information you need"
+          autoFocus
+          value={command}
+          onValueChange={setCommand}
+          name="prompt"
+          disabled={isLoading}
+        />
       </Command>
     </div>
   )

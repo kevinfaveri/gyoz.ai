@@ -1,3 +1,5 @@
+require('dotenv').config();
+/* eslint-disable import/first */
 import * as path from "node:path";
 import express from "express";
 import compression from "compression";
@@ -6,6 +8,7 @@ import { createRequestHandler, type RequestHandler } from "@remix-run/express";
 import { broadcastDevReady, installGlobals } from "@remix-run/node";
 import sourceMapSupport from "source-map-support";
 import cors from "cors";
+import statusRouter from "./routes/status";
 
 // patch in Remix runtime globals
 installGlobals();
@@ -47,6 +50,8 @@ app.use(express.static("public", { maxAge: "1h" }));
 app.use(morgan("tiny"));
 
 app.use(cors());
+
+app.use(statusRouter);
 
 // Check if the server is running in development mode and use the devBuild to reflect realtime changes in the codebase.
 app.all(

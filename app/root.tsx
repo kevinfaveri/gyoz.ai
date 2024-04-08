@@ -36,7 +36,6 @@ export const links: LinksFunction = () => [
 function App() {
   const data = useLoaderData<typeof loader>();
   const [theme] = useTheme();
-
   return (
     <html lang="en" className={theme ?? ""}>
       <head>
