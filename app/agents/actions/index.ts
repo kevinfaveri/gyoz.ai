@@ -43,7 +43,6 @@ export function executeActionPayload(
   toolsMessage: ToolsBetaContentBlock[],
   agents: ReturnType<typeof useActionsAgents>
 ) {
-  console.log(toolsMessage)
   const textBlock: TextBlock | undefined = toolsMessage.find(
     (block) => block.type === 'text'
   ) as TextBlock | undefined
@@ -60,6 +59,8 @@ export function executeActionPayload(
 
   const isTextOnly = !toolUseBlock && textBlock
   if (isTextOnly) {
+    console.debug('Text only block found in the response', textBlock);
+    return;
     // Call the chat agent that talks to the user
   }
 

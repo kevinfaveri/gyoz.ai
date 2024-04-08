@@ -16,8 +16,10 @@ const ActionBar = () => {
   const formRef = React.useRef(null)
   const [isLoading, setIsLoading] = React.useState(false)
   const isFetcherLoading = fetcher.state === 'loading'
+  const previousOutput = usePrevious(fetcher.data?.output)
   const previousIsFetcherLoading = usePrevious(isFetcherLoading)
   React.useEffect(() => {
+    // TODO: Find a successful fetched callback, maybe API endpoint
     if (!isFetcherLoading && previousIsFetcherLoading) {
       setCommand('')
       setIsLoading(false)
@@ -48,15 +50,17 @@ const ActionBar = () => {
 
   const actionAgents = useActionsAgents()
   React.useEffect(() => {
-    if (fetcher.data?.output && fetcher.state === 'idle') {
-      console.log('fetcher.data.output', fetcher.data.output)
+    // TODO: This effect is always triggered
+    if (
+      fetcher.data?.output &&
+      fetcher.state === 'idle'
+    ) {
       executeActionPayload(
         fetcher.data.output as ToolsBetaContentBlock[],
         actionAgents
       )
     }
-    console.debug('Action agents loaded', actionAgents)
-  }, [actionAgents, fetcher.data?.output, fetcher.state])
+  }, [actionAgents, fetcher.data?.output, fetcher.state, previousOutput])
 
   return (
     <div className="absolute bottom-0 w-full flex justify-center">
