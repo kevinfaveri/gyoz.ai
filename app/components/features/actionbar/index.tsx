@@ -8,9 +8,11 @@ import {
 import { useQuickActions } from './useQuickActions'
 import { useFetcher } from '@remix-run/react'
 import usePrevious from '~/hooks/usePrevious'
+import { executeActionPayload, useActionsAgents } from '~/agents/actions'
+import type { ToolsBetaContentBlock } from '@anthropic-ai/sdk/resources/beta/tools/messages'
 
 const ActionBar = () => {
-  const fetcher = useFetcher()
+  const fetcher = useFetcher<{ output: ToolsBetaContentBlock[] }>()
   const formRef = React.useRef(null)
   const [isLoading, setIsLoading] = React.useState(false)
   const isFetcherLoading = fetcher.state === 'loading'
@@ -44,6 +46,18 @@ const ActionBar = () => {
 
   const quickActions = useQuickActions(setCommand)
 
+  const actionAgents = useActionsAgents()
+  React.useEffect(() => {
+    if (fetcher.data?.output && fetcher.state === 'idle') {
+      console.log('fetcher.data.output', fetcher.data.output)
+      executeActionPayload(
+        fetcher.data.output as ToolsBetaContentBlock[],
+        actionAgents
+      )
+    }
+    console.debug('Action agents loaded', actionAgents)
+  }, [actionAgents, fetcher.data?.output, fetcher.state])
+
   return (
     <div className="absolute bottom-0 w-full flex justify-center">
       <Command
@@ -55,7 +69,11 @@ const ActionBar = () => {
           className="border-b border-dotted py-1"
         >
           {quickActions}
-          <CommandItem keywords={['ask-ai']} onSelect={handleSubmit} className="mx-1">
+          <CommandItem
+            keywords={['ask-ai']}
+            onSelect={handleSubmit}
+            className="mx-1"
+          >
             <span className="mr-2 h-4 w-4">🥟</span>
             <span>Talk to Gyoza OS</span>
           </CommandItem>

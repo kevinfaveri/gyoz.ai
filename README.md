@@ -13,7 +13,7 @@ BUGFIX: Disable actions list if it is loading a from Gyoza OS.
 -> Test Haiku or Sonnet performance
 -> Finally, integrate UI with chatbox and actions, rewriting the execute action function to use tools format
 
-2 - Add wallet connection in the UI; DB to store conversation history; save this stuff / connect it to "APP_Context", and also as conversation chain (check Anthropic API for more info on conversation chatboxes)
+2 - Add wallet connection in the UI; DB to store conversation history; save this stuff / connect it to "App Context", and also as conversation chain (check Anthropic API for more info on conversation chatboxes)
 -> Study how to create a new conversation history automatically by having the "tools" return a field "subjectChanged" that can be true or false. If subject changed, create in the DB a new conversation history chain, which will reduce the prompt sent to anthropic API with time while still maintaing context
 
 3 - Add a couple actions that get answered with the round trip to the AI (check https://docs.anthropic.com/claude/docs/tool-use#best-practices-for-tool-definitions, first get tool, execute tool, feed tool info back into the AI, return readable result): like transferring items from your wallet with configurable fees, Jito bribery; swaping token for token (with optional slippage information, otherwise using default) using Jupiter; creating pool on Kamino or Meteora with a prompt; listing 1 NFT on tensor / buying NFT on tensor / sweeping collection; 
@@ -28,6 +28,8 @@ BUGFIX: Disable actions list if it is loading a from Gyoza OS.
 
 6 - Add better topbar, and add sidebar navigation / or some cool navigation mechanisms between subjects (maybe a timeline?)
 
+7 - If it matches a tool context, the tool might still return the available options and the repeated tool block to show some action buttons.
+
 P1 7 - Rather than refetching each subject and starting a new, allow to really navigate to the same chatbox, of course turning off any dynamic / time sensitive / ephemeral action that might have existed
 
 P1 8 - Add gyoza points tracking; calculate based on usage through days, allow to export images to twitter, share refferal links, and the more points u do the better.
@@ -38,7 +40,7 @@ P1 10 - Move tools rather than be static, to the backend. And then allow user to
 
 P1 11 - Extra: add gimmicks like sidebar to show a youtube music integration or something; etc...
 
-P1 12 - For stuff completely out of what fallbackChat can do, it might suggest a google direct search query, fully optimized to find the exact result you want to read
+P1 12 - For stuff completely out of what chatting can do, it might suggest a google direct search query, fully optimized to find the exact result you want to read
 
 ### (Specialist) Interpreters P1
 
@@ -49,7 +51,7 @@ P1 12 - For stuff completely out of what fallbackChat can do, it might suggest a
 1 - Build the builder, which is a mega system prompt fed on the components library, and a set of static actions.
 -> Must build a React Renderer that will read the digested data from other agents that constructs the page
 -> It receives as param the digested data from an action agent/tool
--> fallbackAgent_fallbackChat must start returning "builder" with payload to be fed into it (e.g. description of the page to build must achieve and what functions can be called from a library of functions to fed into the builder)
+-> text/tool returns from action might return an extra param like "pageMorph": true OR false; which would trigger the page morph.
 -> The builder is the one who decides on how to build the UI at all, using the digested data it got and the components information it has
 -> Page morphs are ALWAYS a subject change, completely creating a new chatbox history
 -> The builder will also inform if some components in the building are Ephemeral

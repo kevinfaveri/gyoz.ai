@@ -36,9 +36,7 @@ export async function action({ request }: ActionFunctionArgs) {
   let response: ToolsBetaMessage | null = null
   try {
     response = await callAnthropicAPITools(
-      generateActionsPrompt({
-        activeTheme,
-      }),
+      generateActionsPrompt(['The current active theme is ' + activeTheme]),
       prompt?.toString(),
       ALL_ACTIONS_TOOLS
     )
@@ -54,8 +52,8 @@ export async function action({ request }: ActionFunctionArgs) {
   if (!response) {
     return json({ error: 'Failed to fetch LLM data' }, { status: 500 })
   }
-  console.log(JSON.stringify(response))
-  return json({ output: '' })
+  console.debug(response)
+  return json({ output: response.content })
 }
 
 export default function Index() {

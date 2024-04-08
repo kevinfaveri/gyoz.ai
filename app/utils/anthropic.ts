@@ -19,7 +19,6 @@ export async function callAnthropicAPITools(
   const anthropic = new Anthropic({
     apiKey: process.env.ANTHROPIC_API_KEY,
   })
-
   const msg = await anthropic.beta.tools.messages.create(
     {
       model: MODELS.haiku,
@@ -34,8 +33,5 @@ export async function callAnthropicAPITools(
       temperature: 0,
     },
   )
-
-  // TODO: Sometimes, the model may allucinate and put the tool inside a text. We should extract it.
-
   return msg
 }
