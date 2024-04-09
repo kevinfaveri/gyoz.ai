@@ -9,7 +9,7 @@ export const meta: MetaFunction = () => {
     { title: 'Gyoza OS' },
     {
       name: 'description',
-      content: 'Chat around, find out. Defi made simple.',
+      content: 'Chat around, find out. DeFi made simple.',
     },
   ]
 }

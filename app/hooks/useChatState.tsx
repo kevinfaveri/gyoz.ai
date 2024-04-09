@@ -2,18 +2,19 @@ import type Anthropic from '@anthropic-ai/sdk'
 import * as React from 'react'
 
 export type Message = {
+  id?: string
   role: 'user' | 'assistant'
-  content: (
+  content: Array<
     | Anthropic.Messages.TextBlockParam
     | Anthropic.Messages.ImageBlockParam
     | Anthropic.Beta.Tools.ToolsBetaContentBlock
-  )[]
+  >
 }
 
 interface ChatStateContextValue {
   messages: Message[]
   addMessage: (message: Message) => void
-  addMessageAndReplaceLast: (message: Message) => void
+  addMessageAndReplace: (newMessage: Message) => void
   clearMessages: () => void
   isLoading: boolean
   setIsLoading: (isLoading: boolean) => void
@@ -35,18 +36,22 @@ export const ChatStateProvider = ({
     setMessages((prevMessages) => [...prevMessages, message])
   }
 
-  const addMessageAndReplaceLast = (message: Message) => {
+  const addMessageAndReplace = (newMessage: Message) => {
     setMessages((prevMessages) => {
-      if (prevMessages.length === 0) {
-        return [message]
+      const existingMessageIndex = prevMessages.findIndex(
+        (prevMessage) =>
+          prevMessage.id === newMessage.id ||
+          prevMessage.id === 'placeholder_id'
+      )
+      if (existingMessageIndex > -1) {
+        const updatedMessages = [...prevMessages]
+        updatedMessages[existingMessageIndex] = newMessage
+        return updatedMessages
       } else {
-        const newMessages = [...prevMessages]
-        newMessages[newMessages.length - 1] = message
-        return newMessages
+        return [...prevMessages, newMessage]
       }
     })
   }
-
   const clearMessages = () => {
     setMessages([])
   }
@@ -55,7 +60,7 @@ export const ChatStateProvider = ({
     () => ({
       messages,
       addMessage,
-      addMessageAndReplaceLast,
+      addMessageAndReplace,
       clearMessages,
       isLoading,
       setIsLoading,

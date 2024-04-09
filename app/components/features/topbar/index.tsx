@@ -4,7 +4,7 @@ const Topbar = () => {
       <div className="cursor-pointer flex flex-col items-center space-x-2 w-fit">
         <span className="text-sm font-bold">Gyoza OS</span>
         <span className="text-xs">
-          Chat around, find out. Defi made simple.
+          Chat around, find out. DeFi made simple.
         </span>
       </div>
     </div>

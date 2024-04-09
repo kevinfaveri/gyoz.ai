@@ -11,7 +11,7 @@ export const Chatbox = () => {
         message.content.map((content) =>
           content.type === 'text' ? (
             <li
-              key={index}
+              key={`${message.id}-${index}`}
               className={twMerge(
                 message.role === 'user' ? 'justify-end' : 'justify-start',
                 'w-full flex'

@@ -22,7 +22,7 @@ export async function action({ request }: ActionFunctionArgs) {
   let response: ToolsBetaMessage | null = null
   try {
     response = await callAnthropicAPITools(
-      generateActionsPrompt(['The current active theme is ' + activeTheme]),
+      generateActionsPrompt(['The current theme is set to' + activeTheme]),
       prompt?.toString(),
       ALL_ACTIONS_TOOLS
     )

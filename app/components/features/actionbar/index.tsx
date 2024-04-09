@@ -8,6 +8,7 @@ import {
 import { useQuickActions } from './useQuickActions'
 import { useChatState } from '~/hooks/useChatState'
 import { chatStream } from '~/clients/ai-inference'
+import { nanoid } from 'nanoid'
 
 const ActionBar = () => {
   const [command, setCommand] = React.useState('')
@@ -41,7 +42,7 @@ const ActionBar = () => {
   const {
     messages,
     addMessage,
-    addMessageAndReplaceLast,
+    addMessageAndReplace,
     isLoading,
     setIsLoading,
   } = useChatState()
@@ -49,17 +50,30 @@ const ActionBar = () => {
     const prompt = command
     setCommand('')
     setIsLoading(true)
-    addMessage({ role: 'user', content: [{ type: 'text', text: prompt }] })
-    addMessage({ role: 'assistant', content: [{ type: 'text', text: '' }] })
+    addMessage({
+      role: 'user',
+      id: nanoid(),
+      content: [{ type: 'text', text: prompt }],
+    })
+    addMessage({
+      role: 'assistant',
+      id: 'placeholder_id',
+      content: [{ type: 'text', text: '' }],
+    })
     const response = await chatStream({
       prompt,
-      messages,
+      messages: messages.map((message) => ({
+        role: message.role,
+        content: message.content.filter((block) => block.type === 'text'),
+      })),
       onChunk: (message) =>
-        addMessageAndReplaceLast({
+        addMessageAndReplace({
           role: 'assistant',
-          content: [{ type: 'text', text: message }],
+          id: message.messageId,
+          content: message.contentBlocks,
         }),
-    }).catch((error) => {
+    }).catch((e) => {
+      console.error(e)
       return null
     })
     if (!response) {
@@ -67,17 +81,21 @@ const ActionBar = () => {
       return
     }
 
-    addMessageAndReplaceLast({
-      role: 'assistant',
-      content: [
-        {
-          type: 'text',
-          text: response,
-        },
-      ],
-    })
+    // Make this work later; and make chatbox hide anything than text
+    // addMessageAndReplaceLast({
+    //   role: 'assistant',
+    //   content: [
+    //     {
+    //       type: 'text',
+    //       text: (response.find((block) => block.type === 'text') as TextBlock)
+    //         .text,
+    //     },
+    //   ],
+    // })
     setIsLoading(false)
-    commandInputRef.current?.focus()
+    setTimeout(() => {
+      commandInputRef.current?.focus()
+    }, 100)
   }
 
   return (
