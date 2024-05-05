@@ -2,7 +2,7 @@ import type { Tool } from '@anthropic-ai/sdk/resources/beta/tools/messages'
 
 export const INFORMATION_ACTIONS_AGENT_BRAIN: Tool[] = [
   {
-    name: 'fallbackAgent_searchCryptoWeb',
+    name: 'informationAgent_searchCryptoWeb',
     description: `This tool allows you to open a specified URL related to cryptocurrencies or blockchain technology in a web browser and search for information within that website. It is useful when the user wants to find specific content or explore a particular crypto-related website.
 
     To use this tool, provide the target URL as a string in the 'url' parameter. The URL should be valid, accessible, and start with 'https://'. If the URL is not explicitly related to cryptocurrencies or blockchain but can be inferred to be crypto-related based on its content or domain name, consider it valid and proceed with the search. However, if the provided URL is known to be unrelated to cryptocurrencies or blockchain, do not use this tool.
@@ -31,7 +31,7 @@ export const INFORMATION_ACTIONS_AGENT_BRAIN: Tool[] = [
     },
   },
   {
-    name: 'fallbackAgent_explainCryptoStuff',
+    name: 'informationAgent_explainCryptoStuff',
     description: `This tool provides detailed explanations and information about various cryptocurrency concepts, focusing on the cryptocurrency ecosystem. It can help users understand the basics of cryptocurrency, its unique features, and how it differs from other blockchain platforms.
   
     To use this tool, provide a concise description of the user's query related to cryptocurrencies or blockchain technology as the 'topic' input. The tool will then generate clear, informative explanations tailored to the given topic. The 'topic' should be a specific concept, term, or phrase within the cryptocurrency ecosystem or general crypto concepts.
