@@ -7,5 +7,4 @@ node_modules
 .env
 yarn.lock
 /server.js
-package-lock.json
 .env
