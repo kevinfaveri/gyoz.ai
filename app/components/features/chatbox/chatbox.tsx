@@ -19,13 +19,17 @@ export const Chatbox = () => {
             >
               <div
                 className={twMerge(
-                  message.role === 'user' ? 'border-2 border-primary rounded-xl shadow-inner shadow-primary' : 'justify-start',
+                  message.role === 'user'
+                    ? 'border-2 border-primary rounded-xl shadow-inner shadow-primary'
+                    : 'justify-start',
                   'w-fit flex items-center p-2'
                 )}
               >
                 <span>
                   {message.role === 'assistant' && (
-                    <Loading animated={isLoading} />
+                    <Loading
+                      animated={isLoading && index === messages.length - 1}
+                    />
                   )}
                 </span>
                 <span>{content.text}</span>
