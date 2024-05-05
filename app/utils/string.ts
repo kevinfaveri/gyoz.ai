@@ -34,9 +34,14 @@ function patchJSONString(jsonString: string): string {
       jsonString += '"'
     }
 
-    if (error instanceof SyntaxError && jsonString.includes('},')) {
-      jsonString = replaceAfterLastOccurrence(jsonString)
+    try {
+      JSON.parse(jsonString)
+    } catch (error) {
+      if (error instanceof SyntaxError && jsonString.includes('},')) {
+        jsonString = replaceAfterLastOccurrence(jsonString)
+      }
     }
+    
     return patchJSONString(jsonString)
   }
 }

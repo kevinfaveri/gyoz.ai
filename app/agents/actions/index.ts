@@ -1,11 +1,9 @@
 import type {
   Tool,
-  ToolsBetaContentBlock,
   ToolUseBlock,
 } from '@anthropic-ai/sdk/resources/beta/tools/messages'
 import { INFORMATION_ACTIONS_AGENT_BRAIN } from './information'
 import { UI_ACTIONS_AGENT_BRAIN } from './ui-actions'
-import type { TextBlock } from '@anthropic-ai/sdk/resources'
 import { useUIActionsAgent } from './ui-actions/agent'
 import { minifyString } from '~/utils/string'
 import { useInformationActionAgent } from './information/agent'
@@ -39,46 +37,36 @@ export function useActionsAgents() {
   }
 }
 
-export function executeActionPayload(
-  toolsMessage: ToolsBetaContentBlock[],
+export async function executeActionPayload(
+  toolsMessage: ToolUseBlock[],
   agents: ReturnType<typeof useActionsAgents>
 ) {
-  const textBlock: TextBlock | undefined = toolsMessage.find(
-    (block) => block.type === 'text'
-  ) as TextBlock | undefined
-  const toolUseBlock: ToolUseBlock | undefined = toolsMessage.find(
-    (block) => block.type === 'tool_use'
-  ) as ToolUseBlock | undefined
-  if (!textBlock && !toolUseBlock) {
-    console.debug(
-      'No text and tool_use block found in the response',
-      JSON.stringify(toolsMessage)
+  for (let i = 0; i < toolsMessage.length; i++) {
+    const toolUseBlock = toolsMessage[i]
+    if (!toolUseBlock) {
+      console.debug(
+        'No tool_use block found in the response',
+        JSON.stringify(toolsMessage)
+      )
+      throw new Error('Invalid payload format...')
+    }
+
+    const [agentName, functionName] = toolUseBlock?.name.split('_') || []
+
+    if (!agentName || !functionName || toolUseBlock?.input === undefined) {
+      console.debug(
+        'Invalid tool_use block found in the response',
+        JSON.stringify(toolUseBlock)
+      )
+      throw new Error('Invalid payload format...')
+    }
+
+    const agent = agents[agentName as keyof typeof agents]
+
+    await (agent[functionName as keyof typeof agent] as Function)(
+      toolUseBlock?.input
     )
-    throw new Error('Invalid payload format...')
   }
-
-  const isTextOnly = !toolUseBlock && textBlock
-  if (isTextOnly) {
-    console.debug('Text only block found in the response', textBlock)
-    return
-    // Call the chat agent that talks to the user
-  }
-
-  const [agentName, functionName] = toolUseBlock?.name.split('_') || []
-
-  if (!agentName || !functionName || toolUseBlock?.input === undefined) {
-    console.debug(
-      'Invalid tool_use block found in the response',
-      JSON.stringify(toolUseBlock)
-    )
-    throw new Error('Invalid payload format...')
-  }
-
-  const agent = agents[agentName as keyof typeof agents]
-
-  return (agent[functionName as keyof typeof agent] as Function)(
-    toolUseBlock?.input
-  )
 }
 
 export const generateActionsPrompt = (appContext: string[]) =>

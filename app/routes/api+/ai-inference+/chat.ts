@@ -61,7 +61,6 @@ export async function action({ request }: ActionFunctionArgs) {
             break
           }
           const dataAsString = new TextDecoder().decode(value)
-
           const chunks = dataAsString
             .split('\n')
             .filter((c) => Boolean(c.length))
@@ -72,7 +71,6 @@ export async function action({ request }: ActionFunctionArgs) {
             }
             if (chunks[i].type === 'content_block_delta') {
               contentBlockString += chunks[i].delta.text
-
               try {
                 contentBlocksObject = completeAndParseJSON(contentBlockString)
               } catch (e) {

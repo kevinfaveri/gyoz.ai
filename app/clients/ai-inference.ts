@@ -13,7 +13,7 @@ export const chatStream = async ({
   prompt: string
   messages: Message[]
   onChunk: (messages: APIMessage) => void
-}): Promise<any> => {
+}): Promise<APIMessage> => {
   const response = await fetch('/api/ai-inference/chat', {
     method: 'POST',
     body: JSON.stringify({ prompt, messages }),
@@ -48,5 +48,5 @@ export const chatStream = async ({
     }
   }
 
-  return apiMessage
+  return apiMessage as APIMessage
 }

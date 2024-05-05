@@ -9,6 +9,8 @@ import { useQuickActions } from './useQuickActions'
 import { useChatState } from '~/hooks/useChatState'
 import { chatStream } from '~/clients/ai-inference'
 import { nanoid } from 'nanoid'
+import { executeActionPayload, useActionsAgents } from '~/agents/actions'
+import type { ToolUseBlock } from '@anthropic-ai/sdk/resources/beta/tools/messages'
 
 const ActionBar = () => {
   const [command, setCommand] = React.useState('')
@@ -28,16 +30,7 @@ const ActionBar = () => {
 
   const quickActions = useQuickActions(setCommand)
 
-  // const actionAgents = useActionsAgents()
-  // React.useEffect(() => {
-  //   // TODO: This effect is always triggered
-  //   if (fetcher.data?.output && fetcher.state === 'idle') {
-  //     executeActionPayload(
-  //       fetcher.data.output as ToolsBetaContentBlock[],
-  //       actionAgents
-  //     )
-  //   }
-  // }, [actionAgents, fetcher.data?.output, fetcher.state, previousOutput])
+  const actionAgents = useActionsAgents()
 
   const {
     messages,
@@ -81,17 +74,11 @@ const ActionBar = () => {
       return
     }
 
-    // Make this work later; and make chatbox hide anything than text
-    // addMessageAndReplaceLast({
-    //   role: 'assistant',
-    //   content: [
-    //     {
-    //       type: 'text',
-    //       text: (response.find((block) => block.type === 'text') as TextBlock)
-    //         .text,
-    //     },
-    //   ],
-    // })
+    const tools = response.contentBlocks.filter(
+      (block) => block.type === 'tool_use'
+    ) as ToolUseBlock[]
+    await executeActionPayload(tools, actionAgents)
+
     setIsLoading(false)
     setTimeout(() => {
       commandInputRef.current?.focus()

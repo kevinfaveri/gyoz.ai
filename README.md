@@ -4,7 +4,7 @@ Gyoza OS is an intelligent assistant / quick actions tools that can help you und
 
 ### Actions focused agents and tools integration P0
 
-BUGFIX: Prevent Gyoza OS from telling it is an AI assistant or naming anything other than Gyoza OS as its source, creator, developer.
+BUGFIX: We can add extra theme properties to the API (like reverse, invert, etc) and then use it to infer the reverse theme on the fly, on code (helps bridge the gap with AI being dumb asf)
 
 BUGFIX: Add recursive, with limit, on JSON parsing string AND on API generate response (and then break loudly, with a console error to see what is happening)
 
