@@ -1,12 +1,20 @@
+import { useEffect } from 'react'
 import { twMerge } from 'tailwind-merge'
 import Loading from '~/components/ui/loading'
 import { useChatState } from '~/hooks/useChatState'
+import scrollToBottom from '~/utils/scrollToBottom'
 
 // make it be fixed to the top, just like the action bar is fixed at the bottom
 export const Chatbox = () => {
   const { messages, isLoading } = useChatState()
+  useEffect(() => {
+    scrollToBottom('chat')
+  }, [messages])
   return (
-    <ul className="flex flex-col space-y-2 my-5 max-h-[calc(100%-40px)] pr-3 overflow-y-auto">
+    <ul
+      className="flex flex-col space-y-2 my-5 max-h-[calc(100vh-170px)] pr-3 overflow-y-auto"
+      id="chat"
+    >
       {messages.map((message, index) =>
         message.content.map((content) =>
           content.type === 'text' ? (
