@@ -59,13 +59,12 @@ const ActionBar = () => {
         role: message.role,
         content: message.content.filter((block) => block.type === 'text'),
       })),
-      onChunk: (message) => {
+      onChunk: (message) =>
         addMessageAndReplace({
           role: 'assistant',
           id: message.messageId,
           content: message.contentBlocks,
-        })
-      },
+        }),
     }).catch((e) => {
       console.error(e)
       return null
