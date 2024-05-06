@@ -12,7 +12,7 @@ export const Chatbox = () => {
   }, [messages])
   return (
     <ul
-      className="flex flex-col space-y-2 my-5 max-h-[calc(100vh-140px)] pr-3 overflow-y-auto"
+      className="flex flex-col space-y-2 my-5 max-h-[calc(100vh-170px)] pr-3 overflow-y-auto"
       id="chat"
     >
       {messages.map((message, index) =>
