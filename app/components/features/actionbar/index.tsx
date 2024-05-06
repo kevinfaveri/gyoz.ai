@@ -11,7 +11,6 @@ import { chatStream } from '~/clients/ai-inference'
 import { nanoid } from 'nanoid'
 import { executeActionPayload, useActionsAgents } from '~/agents/actions'
 import type { ToolUseBlock } from '@anthropic-ai/sdk/resources/beta/tools/messages'
-import scrollToBottom from '~/utils/scrollToBottom'
 
 const ActionBar = () => {
   const [command, setCommand] = React.useState('')
@@ -49,7 +48,6 @@ const ActionBar = () => {
       id: nanoid(),
       content: [{ type: 'text', text: prompt }],
     })
-    scrollToBottom()
     addMessage({
       role: 'assistant',
       id: 'placeholder_id',
@@ -62,7 +60,6 @@ const ActionBar = () => {
         content: message.content.filter((block) => block.type === 'text'),
       })),
       onChunk: (message) => {
-        scrollToBottom()
         addMessageAndReplace({
           role: 'assistant',
           id: message.messageId,
