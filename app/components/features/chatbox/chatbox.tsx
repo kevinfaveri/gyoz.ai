@@ -6,7 +6,10 @@ import { useChatState } from '~/hooks/useChatState'
 export const Chatbox = () => {
   const { messages, isLoading } = useChatState()
   return (
-    <ul className="flex flex-col space-y-2 my-5 max-h-[calc(100%-40px)] pr-3 overflow-y-auto">
+    <ul
+      className="flex flex-col space-y-2 my-5 max-h-[calc(100vh-140px)] pr-3 overflow-y-auto"
+      id="chat"
+    >
       {messages.map((message, index) =>
         message.content.map((content) =>
           content.type === 'text' ? (
