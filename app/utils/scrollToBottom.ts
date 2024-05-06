@@ -1,6 +1,6 @@
 export default function scrollToBottom(elementId: string) {
-  const observedElement = document.getElementById(elementId)
-  if (observedElement) {
-    observedElement.scrollTop = observedElement.scrollHeight
+  const elementToScroll = document.getElementById(elementId)
+  if (elementToScroll) {
+    elementToScroll.scrollTop = elementToScroll.scrollHeight
   }
 }
