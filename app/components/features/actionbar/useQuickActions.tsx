@@ -2,10 +2,14 @@ import { GearIcon, MoonIcon, SunIcon } from '@radix-ui/react-icons'
 import { Theme, Themed, useTheme } from '~/providers/theme-provider'
 import { CommandItem, CommandGroup } from '../../ui/command'
 
-export function useQuickActions(setCommand: (command: string) => void) {
+export function useQuickActions(
+  setCommand: (command: string) => void,
+  disable: boolean = false
+) {
   const [, setTheme] = useTheme()
 
   const toggleTheme = () => {
+    if (disable) return
     setTheme((prevTheme) => {
       return prevTheme === Theme.LIGHT ? Theme.DARK : Theme.LIGHT
     })
