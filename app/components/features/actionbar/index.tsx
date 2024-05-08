@@ -28,7 +28,7 @@ const ActionBar = () => {
     []
   )
 
-  const quickActions = useQuickActions(setCommand)
+  const quickActions = useQuickActions(setCommand, command.length === 0)
 
   const actionAgents = useActionsAgents()
 
