@@ -90,7 +90,7 @@ const ActionBar = () => {
       <Command className="shadow-inner shadow-primary" filter={filterFnCB}>
         <CommandList
           hidden={command.length === 0}
-          className="border-b border-dotted py-1 absolute left-0 rounded-lg bg-background right-0 bottom-24 shadow-inner shadow-primary"
+          className="border-b max-h-28 border-dotted py-1 absolute left-0 rounded-lg bg-background right-0 bottom-24 shadow-inner shadow-primary"
         >
           {quickActions}
           <CommandItem
