@@ -87,13 +87,10 @@ const ActionBar = () => {
 
   return (
     <div className="w-full flex justify-center">
-      <Command
-        className="rounded-lg border-l border-t border-r shadow-inner shadow-primary"
-        filter={filterFnCB}
-      >
+      <Command className="shadow-inner shadow-primary" filter={filterFnCB}>
         <CommandList
           hidden={command.length === 0}
-          className="border-b border-dotted py-1"
+          className="border-b border-dotted py-1 absolute left-0 rounded-lg bg-background right-0 bottom-24 shadow-inner shadow-primary"
         >
           {quickActions}
           <CommandItem
