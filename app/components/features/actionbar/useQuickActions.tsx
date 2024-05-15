@@ -19,7 +19,12 @@ export function useQuickActions(
       content: [{ type: 'text', text: event }],
     })
     setTheme((prevTheme) => {
-      return prevTheme === Theme.LIGHT ? Theme.DARK : Theme.LIGHT
+      const newTheme = prevTheme === Theme.LIGHT ? Theme.DARK : Theme.LIGHT
+      addMessage({
+        role: 'assistant',
+        content: [{ type: 'text', text: `Done! changed theme to ${newTheme[0].toUpperCase() + newTheme.slice(1)}.` }],
+      })
+      return newTheme 
     })
     setCommand('')
   }
