@@ -11,12 +11,12 @@ export function useQuickActions(
 
   const { addMessage } = useChatState()
 
-  const toggleTheme = (event: any) => {
+  const toggleTheme = (event: string) => {
     if (disable) return
-    console.log(event)
+
     addMessage({
       role: 'user',
-      content: [{ type: 'text', text: 'Toggle theme' }],
+      content: [{ type: 'text', text: event }],
     })
     setTheme((prevTheme) => {
       return prevTheme === Theme.LIGHT ? Theme.DARK : Theme.LIGHT
