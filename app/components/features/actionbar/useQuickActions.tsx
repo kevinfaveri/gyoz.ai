@@ -11,14 +11,14 @@ export function useQuickActions(
 
   const { addMessage } = useChatState()
 
-  const toggleTheme = (event: string) => {
+  const toggleTheme = () => {
     if (disable) return
 
     setTheme((prevTheme) => {
       const newTheme = prevTheme === Theme.LIGHT ? Theme.DARK : Theme.LIGHT
       addMessage({
         role: 'assistant',
-        content: [{ type: 'text', text: `Done! Changed theme to ${newTheme}.` }],
+        content: [{ type: 'text', text: `Done! Changed theme to ${newTheme[0] + newTheme}.` }],
       })
       return newTheme 
     })
@@ -34,7 +34,7 @@ export function useQuickActions(
         </div>
       }
     >
-      <CommandItem onSelect={(event) => toggleTheme(event)}>
+      <CommandItem onSelect={toggleTheme}>
         <Themed
           dark={
             <>
