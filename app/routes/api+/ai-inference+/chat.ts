@@ -1,9 +1,9 @@
 import Anthropic from '@anthropic-ai/sdk'
-import type { MessageParam } from '@anthropic-ai/sdk/resources'
 import type { ToolsBetaContentBlock } from '@anthropic-ai/sdk/resources/beta/tools/messages'
 import { type ActionFunctionArgs, json } from '@remix-run/node'
+import type { MessageParam } from 'types'
 import { generateActionsPrompt } from '~/agents/actions'
-import { callAnthropicAPIStreamWithTools } from '~/utils/anthropic'
+import { callOpenAIAPIStreamWithTools } from '~/utils/openai'
 import { completeAndParseJSON } from '~/utils/string'
 import { getThemeSession } from '~/utils/theme.server'
 
@@ -26,7 +26,7 @@ export async function action({ request }: ActionFunctionArgs) {
   // Call the Claude API with the user's prompt
   let response: ReadableStream | null = null
   try {
-    response = await callAnthropicAPIStreamWithTools(
+    response = await callOpenAIAPIStreamWithTools(
       generateActionsPrompt(['The the current theme is set to ' + activeTheme]),
       prompt?.toString(),
       messages
@@ -44,7 +44,7 @@ export async function action({ request }: ActionFunctionArgs) {
     return json({ error: 'Failed to fetch LLM data' }, { status: 500 })
   }
 
-  let contentBlockString = '[{'
+  let contentBlockString = ''
   let contentBlocksObject: ToolsBetaContentBlock[] = []
   let messageId = ''
   const transformStream = new ReadableStream({
@@ -65,14 +65,24 @@ export async function action({ request }: ActionFunctionArgs) {
             .split('\n')
             .filter((c) => Boolean(c.length))
             .map((c) => JSON.parse(c))
+          console.log(`chunks[i]?.choices`, chunks?.[0]?.choices)
           for (let i = 0; i < chunks.length; i++) {
-            if (chunks[i].type === 'message_start') {
-              messageId = chunks[i]?.message?.id
-            }
-            if (chunks[i].type === 'content_block_delta') {
-              contentBlockString += chunks[i].delta.text
+            if (chunks[i]?.choices[0]?.delta?.content) {
+              console.log(
+                `chunks[i].choices[0].delta.content`,
+                chunks[i].choices[0].delta.content
+              )
+              contentBlockString += chunks[i].choices[0].delta.content
+              contentBlockString = contentBlockString.replaceAll('```', '')
+              if (contentBlockString.startsWith('json')) {
+                contentBlockString = contentBlockString.slice(4)
+              }
+
+              contentBlockString = contentBlockString.replaceAll('```', '')
+              console.log(`contentBlockString`, contentBlockString)
               try {
                 contentBlocksObject = completeAndParseJSON(contentBlockString)
+                console.log(`contentBlocksObject>>`, contentBlocksObject)
               } catch (e) {
                 console.error(e)
                 // retry again return here

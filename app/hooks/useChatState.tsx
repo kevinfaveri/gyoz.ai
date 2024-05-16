@@ -1,9 +1,10 @@
 import type Anthropic from '@anthropic-ai/sdk'
 import * as React from 'react'
+import type { MessageRole } from 'types'
 
 export type Message = {
   id?: string
-  role: 'user' | 'assistant'
+  role: MessageRole
   content: Array<
     | Anthropic.Messages.TextBlockParam
     | Anthropic.Messages.ImageBlockParam

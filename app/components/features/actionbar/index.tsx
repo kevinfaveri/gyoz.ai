@@ -11,6 +11,7 @@ import { chatStream } from '~/clients/ai-inference'
 import { nanoid } from 'nanoid'
 import { executeActionPayload, useActionsAgents } from '~/agents/actions'
 import type { ToolUseBlock } from '@anthropic-ai/sdk/resources/beta/tools/messages'
+import { MessageRole } from 'types'
 
 const ActionBar = () => {
   const [command, setCommand] = React.useState('')
@@ -44,24 +45,39 @@ const ActionBar = () => {
     setCommand('')
     setIsLoading(true)
     addMessage({
-      role: 'user',
+      role: MessageRole.user,
       id: nanoid(),
       content: [{ type: 'text', text: prompt }],
     })
     addMessage({
-      role: 'assistant',
+      role: MessageRole.assistant,
       id: 'placeholder_id',
       content: [{ type: 'text', text: '' }],
     })
     const response = await chatStream({
       prompt,
-      messages: messages.map((message) => ({
-        role: message.role,
-        content: message.content.filter((block) => block.type === 'text'),
-      })),
+      messages: messages.flatMap((message) => {
+        const messages = []
+        for (const block of message.content) {
+          if (block.type === 'text') {
+            messages.push({
+              role: message.role,
+              content: block.text,
+            })
+          }
+          if (block.type === 'tool_use') {
+            messages.push({
+              role: message.role,
+              content: JSON.stringify(block),
+              tool_call_id: block.id,
+            })
+          }
+        }
+        return messages
+      }),
       onChunk: (message) =>
         addMessageAndReplace({
-          role: 'assistant',
+          role: MessageRole.assistant,
           id: message.messageId,
           content: message.contentBlocks,
         }),

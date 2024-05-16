@@ -1,5 +1,5 @@
 import type { ToolsBetaContentBlock } from '@anthropic-ai/sdk/resources/beta/tools/messages'
-import type { Message } from '~/hooks/useChatState'
+import type { MessageParam } from 'types'
 
 interface APIMessage {
   contentBlocks: ToolsBetaContentBlock[]
@@ -11,7 +11,7 @@ export const chatStream = async ({
   onChunk,
 }: {
   prompt: string
-  messages: Message[]
+  messages: MessageParam[]
   onChunk: (messages: APIMessage) => void
 }): Promise<APIMessage> => {
   const response = await fetch('/api/ai-inference/chat', {
