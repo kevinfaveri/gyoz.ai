@@ -14,15 +14,11 @@ export function useQuickActions(
   const toggleTheme = (event: string) => {
     if (disable) return
 
-    addMessage({
-      role: 'user',
-      content: [{ type: 'text', text: event }],
-    })
     setTheme((prevTheme) => {
       const newTheme = prevTheme === Theme.LIGHT ? Theme.DARK : Theme.LIGHT
       addMessage({
         role: 'assistant',
-        content: [{ type: 'text', text: `Done! changed theme to ${newTheme[0].toUpperCase() + newTheme.slice(1)}.` }],
+        content: [{ type: 'text', text: `Done! Changed theme to ${newTheme}.` }],
       })
       return newTheme 
     })
