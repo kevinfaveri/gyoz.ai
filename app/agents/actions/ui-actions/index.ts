@@ -11,6 +11,7 @@ export const UI_ACTIONS_AGENT_BRAIN: Tool[] = [
     Return text only message "The theme is already selected" if user's query theme is the same as the current active theme.
     Return text only if user's query asks about the current active theme.
     Return text only if user's query theme is any other color value other than "dark" or "light" or "reverse" or "inverse" or "invert" or very similar values like "black" for dark mode or "white" for light mode.
+    Since there are only two themes available, if the user request to change the theme without specifying, it will default to the opposite of the current active theme.
 
     To use this tool, provide the desired theme as the 'theme' input as either "${Theme.DARK}" for a dark theme or "${Theme.LIGHT}" for a light theme. The tool will then change the color scheme of the website accordingly.
     Return the tool if user's query theme is either "dark", "light" OR very similar values such as "black" for dark mode or "white" for light mode.

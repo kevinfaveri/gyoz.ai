@@ -2,66 +2,42 @@ export function minifyString(str: string) {
   return str.replace(/[\n\r\t]+|\s{2,}/g, ' ').replace(/\s{2}/g, ' ')
 }
 
-function replaceAfterLastOccurrence(inputString: string) {
-  const lastIndex = inputString.lastIndexOf('},')
-  if (lastIndex !== -1) {
-    return inputString.slice(0, lastIndex) + '}]'
+export function completeJSON(incompleteStr: string): any {
+  // Add initial checks and adjustments for the incomplete string
+  if (!incompleteStr.trim().startsWith('{')) {
+    incompleteStr = '{' + incompleteStr
   }
-  return inputString
-}
 
-function patchJSONString(jsonString: string): string {
-  try {
-    JSON.parse(jsonString)
-    return jsonString
-  } catch (error) {
-    if (
-      error instanceof SyntaxError &&
-      error.message.includes(`Expected ',' or '}'`)
-    ) {
-      jsonString += '}'
-    }
-    if (
-      error instanceof SyntaxError &&
-      error.message.includes(`Expected ',' or ']'`)
-    ) {
-      jsonString += ']'
-    }
-    if (
-      error instanceof SyntaxError &&
-      error.message.includes(`Unterminated string in JSON`)
-    ) {
-      jsonString += '"'
-    }
-
-    try {
-      JSON.parse(jsonString)
-    } catch (error) {
-      if (error instanceof SyntaxError && jsonString.includes('},')) {
-        jsonString = replaceAfterLastOccurrence(jsonString)
-      }
-    }
-    
-    return patchJSONString(jsonString)
-  }
-}
-
-export function completeAndParseJSON(jsonString: string): any {
-  jsonString = jsonString.trim()
-  jsonString = jsonString.replace(/\n/g, '')
-  if (/^\[\s*{\s*"type"\s*:\s*"text"\s*,\s*"text"\s*:\s*"/.test(jsonString)) {
-    // If the string starts with the expected pattern, patch it
-    jsonString = patchJSONString(jsonString)
+  if (!incompleteStr.includes('message')) {
+    incompleteStr = '{"message": "", "tools": null}'
   } else {
-    // If the string doesn't start with the expected pattern, create a valid JSON string
-    jsonString = '[{"type":"text", "text": ""}]'
+    // Handling incomplete message value
+    const messageKeyValue = incompleteStr.match(/"message"\s*:\s*"([^"]*)?$/)
+    if (messageKeyValue) {
+      incompleteStr = incompleteStr.replace(
+        /"message"\s*:\s*"([^"]*)?$/,
+        `"message": "${messageKeyValue[1] || ''}"`
+      )
+    } else {
+      incompleteStr = incompleteStr.replace(
+        /"message"\s*:\s*"([^"]*)?([^"]*)$/,
+        `"message": "$1"`
+      )
+    }
   }
-  // Parse the completed JSON string
+
+  // Close the JSON object
+  if (!incompleteStr.trim().endsWith('}')) {
+    incompleteStr += '}'
+  }
+
+  // Ensure the completeStr is a valid JSON
   try {
-    const parsedJSON = JSON.parse(jsonString)
-    return parsedJSON
-  } catch (error) {
-    console.error('Error parsing JSON:', error)
-    return null
+    JSON.parse(incompleteStr)
+  } catch (e) {
+    // If it's still not valid, return a dummy JSON string
+    incompleteStr = '{"message": "", "tools": null}'
   }
+
+  return JSON.parse(incompleteStr)
 }

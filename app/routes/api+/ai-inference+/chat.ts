@@ -1,10 +1,10 @@
 import Anthropic from '@anthropic-ai/sdk'
-import type { ToolsBetaContentBlock } from '@anthropic-ai/sdk/resources/beta/tools/messages'
 import { type ActionFunctionArgs, json } from '@remix-run/node'
-import type { MessageParam } from 'types'
+import type { AgentResponse, MessageParam } from '~/types'
+import { AgentResponseSchema } from '~/types'
 import { generateActionsPrompt } from '~/agents/actions'
 import { callOpenAIAPIStreamWithTools } from '~/utils/openai'
-import { completeAndParseJSON } from '~/utils/string'
+import { completeJSON } from '~/utils/string'
 import { getThemeSession } from '~/utils/theme.server'
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -45,7 +45,10 @@ export async function action({ request }: ActionFunctionArgs) {
   }
 
   let contentBlockString = ''
-  let contentBlocksObject: ToolsBetaContentBlock[] = []
+  let contentBlocksObject: AgentResponse = {
+    message: '',
+    tools: [],
+  }
   let messageId = ''
   const transformStream = new ReadableStream({
     async start(controller) {
@@ -65,33 +68,29 @@ export async function action({ request }: ActionFunctionArgs) {
             .split('\n')
             .filter((c) => Boolean(c.length))
             .map((c) => JSON.parse(c))
-          console.log(`chunks[i]?.choices`, chunks?.[0]?.choices)
-          for (let i = 0; i < chunks.length; i++) {
-            if (chunks[i]?.choices[0]?.delta?.content) {
-              console.log(
-                `chunks[i].choices[0].delta.content`,
-                chunks[i].choices[0].delta.content
-              )
-              contentBlockString += chunks[i].choices[0].delta.content
-              contentBlockString = contentBlockString.replaceAll('```', '')
-              if (contentBlockString.startsWith('json')) {
-                contentBlockString = contentBlockString.slice(4)
-              }
 
-              contentBlockString = contentBlockString.replaceAll('```', '')
-              console.log(`contentBlockString`, contentBlockString)
+          for (let i = 0; i < chunks.length; i++) {
+            if (!messageId.length && chunks[i]?.id) {
+              messageId = chunks[i]?.id
+            }
+            if (chunks[i]?.choices[0]?.delta?.content) {
+              contentBlockString += chunks[i].choices[0].delta.content
+              console.log(`contentBlockString`, chunks[i].choices[0].delta)
               try {
-                contentBlocksObject = completeAndParseJSON(contentBlockString)
-                console.log(`contentBlocksObject>>`, contentBlocksObject)
+                contentBlocksObject = completeJSON(contentBlockString)
+                AgentResponseSchema.parse(contentBlocksObject)
               } catch (e) {
                 console.error(e)
-                // retry again return here
+                // Do retry here if type is invalid
               }
             }
           }
+
           controller.enqueue(
             `${JSON.stringify({
-              contentBlocks: contentBlocksObject,
+              data: contentBlocksObject || {
+                message: '',
+              },
               messageId,
             })}\n`
           )

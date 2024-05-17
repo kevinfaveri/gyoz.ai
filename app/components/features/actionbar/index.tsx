@@ -10,8 +10,8 @@ import { useChatState } from '~/hooks/useChatState'
 import { chatStream } from '~/clients/ai-inference'
 import { nanoid } from 'nanoid'
 import { executeActionPayload, useActionsAgents } from '~/agents/actions'
-import type { ToolUseBlock } from '@anthropic-ai/sdk/resources/beta/tools/messages'
-import { MessageRole } from 'types'
+import type { MessageParam } from '~/types'
+import { MessageRole } from '~/types'
 
 const ActionBar = () => {
   const [command, setCommand] = React.useState('')
@@ -47,40 +47,33 @@ const ActionBar = () => {
     addMessage({
       role: MessageRole.user,
       id: nanoid(),
-      content: [{ type: 'text', text: prompt }],
+      content: prompt,
     })
     addMessage({
       role: MessageRole.assistant,
       id: 'placeholder_id',
-      content: [{ type: 'text', text: '' }],
+      content: '',
     })
     const response = await chatStream({
       prompt,
       messages: messages.flatMap((message) => {
-        const messages = []
-        for (const block of message.content) {
-          if (block.type === 'text') {
-            messages.push({
-              role: message.role,
-              content: block.text,
-            })
-          }
-          if (block.type === 'tool_use') {
-            messages.push({
-              role: message.role,
-              content: JSON.stringify(block),
-              tool_call_id: block.id,
-            })
-          }
+        const messages: MessageParam[] = []
+        if (message.content) {
+          messages.push({
+            role: message.role,
+            content: message.content,
+          })
         }
         return messages
       }),
-      onChunk: (message) =>
-        addMessageAndReplace({
+      onChunk: (message) => {
+        console.log('message', message.data.message)
+        return addMessageAndReplace({
           role: MessageRole.assistant,
           id: message.messageId,
-          content: message.contentBlocks,
-        }),
+          content: message.data.message,
+        })
+      },
     }).catch((e) => {
       console.error(e)
       return null
@@ -90,9 +83,7 @@ const ActionBar = () => {
       return
     }
 
-    const tools = response.contentBlocks.filter(
-      (block) => block.type === 'tool_use'
-    ) as ToolUseBlock[]
+    const tools = response.data.tools || []
     await executeActionPayload(tools, actionAgents)
 
     setIsLoading(false)

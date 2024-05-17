@@ -1,8 +1,7 @@
-import type { ToolsBetaContentBlock } from '@anthropic-ai/sdk/resources/beta/tools/messages'
-import type { MessageParam } from 'types'
+import type { AgentResponse, MessageParam } from '~/types'
 
 interface APIMessage {
-  contentBlocks: ToolsBetaContentBlock[]
+  data: AgentResponse
   messageId: string
 }
 export const chatStream = async ({
@@ -35,12 +34,12 @@ export const chatStream = async ({
     while ((newlineIndex = buffer.indexOf('\n')) !== -1) {
       const chunk = buffer.slice(0, newlineIndex)
       buffer = buffer.slice(newlineIndex + 1)
-
+      console.log(`chunk`, chunk)
       if (chunk.trim().length === 0) continue
 
       try {
         const contentBlocksEvent: APIMessage = JSON.parse(chunk)
-        onChunk(contentBlocksEvent)
+        await onChunk(contentBlocksEvent)
         apiMessage = contentBlocksEvent
       } catch (error) {
         console.error('Error parsing JSON:', error)

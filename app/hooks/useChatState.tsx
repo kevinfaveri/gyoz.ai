@@ -1,15 +1,10 @@
-import type Anthropic from '@anthropic-ai/sdk'
 import * as React from 'react'
-import type { MessageRole } from 'types'
+import type { MessageRole } from '~/types'
 
 export type Message = {
   id?: string
   role: MessageRole
-  content: Array<
-    | Anthropic.Messages.TextBlockParam
-    | Anthropic.Messages.ImageBlockParam
-    | Anthropic.Beta.Tools.ToolsBetaContentBlock
-  >
+  content: string
 }
 
 interface ChatStateContextValue {
@@ -44,9 +39,13 @@ export const ChatStateProvider = ({
           prevMessage.id === newMessage.id ||
           prevMessage.id === 'placeholder_id'
       )
-      if (existingMessageIndex > -1) {
+      if (existingMessageIndex !== -1) {
         const updatedMessages = [...prevMessages]
-        updatedMessages[existingMessageIndex] = newMessage
+        if (newMessage.content === '') {
+          updatedMessages.splice(existingMessageIndex, 1)
+        } else {
+          updatedMessages[existingMessageIndex] = newMessage
+        }
         return updatedMessages
       } else {
         return [...prevMessages, newMessage]
