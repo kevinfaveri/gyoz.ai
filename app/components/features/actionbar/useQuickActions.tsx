@@ -1,6 +1,7 @@
 import { GearIcon, MoonIcon, SunIcon } from '@radix-ui/react-icons'
 import { Theme, Themed, useTheme } from '~/providers/theme-provider'
 import { CommandItem, CommandGroup } from '../../ui/command'
+import { useChatState } from '~/hooks/useChatState'
 
 export function useQuickActions(
   setCommand: (command: string) => void,
@@ -8,10 +9,18 @@ export function useQuickActions(
 ) {
   const [, setTheme] = useTheme()
 
+  const { addMessage } = useChatState()
+
   const toggleTheme = () => {
     if (disable) return
+
     setTheme((prevTheme) => {
-      return prevTheme === Theme.LIGHT ? Theme.DARK : Theme.LIGHT
+      const newTheme = prevTheme === Theme.LIGHT ? Theme.DARK : Theme.LIGHT
+      addMessage({
+        role: 'assistant',
+        content: [{ type: 'text', text: `Done! Changed theme to ${newTheme[0] + newTheme}.` }],
+      })
+      return newTheme 
     })
     setCommand('')
   }
