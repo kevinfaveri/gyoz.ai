@@ -4,6 +4,15 @@ Gyoza OS is an intelligent assistant / quick actions tools that can help you und
 
 ### Actions focused agents and tools integration P0
 
+PIVOT (UIUX):
+- Pivot to centralized UI
+- When you select an action, it animates the action bar to the top bar a bit, and then in the center->bottom it shows the result of the action
+-> If the action is a specific tool, it shows the tool options as replacement for the searchbar
+---> If the user select the option, and goes to the end of the action, at the final screen, it should show the searchbar again, with the result of the action in the center->bottom
+-> If user wants to ignore previous action / navigation, they can click on a + tab icon that will open a new tab / page, focusing on the searchbar once again
+- History of actions can be navigated by using arrows left / right (as well as other style, like being allowed to expand the arrows to see in a timeline / list fashion)
+- Stop feeeding the AI the entire content of previous conversations, just feed the user asked question; if the action requires multi steps, the software will generate leaves out of contexts (e.g. continue scrolling down with options of the user / creating new pages users can navigate to)
+
 BUGFIX: We can add extra theme properties to the API (like reverse, invert, etc) and then use it to infer the reverse theme on the fly, on code (helps bridge the gap with AI being dumb asf)
 
 BUGFIX: Add recursive, with limit, on JSON parsing string AND on API generate response (and then break loudly, with a console error to see what is happening)
