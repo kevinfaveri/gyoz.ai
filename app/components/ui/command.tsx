@@ -1,6 +1,5 @@
 import * as React from 'react'
 import { type DialogProps } from '@radix-ui/react-dialog'
-import { MagnifyingGlassIcon } from '@radix-ui/react-icons'
 import { Command as CommandPrimitive } from 'cmdk'
 
 import { cn } from 'app/utils/shad'
@@ -41,10 +40,15 @@ const CommandInput = React.forwardRef<
 >(({ className, ...props }, ref) => {
   return (
     <div
-      className="relative flex items-center px-3 mb-10 mt-5"
+      className="relative flex items-center px-3 my-3"
       cmdk-input-wrapper=""
     >
-      <MagnifyingGlassIcon className="mr-2 h-4 w-4 shrink-0 opacity-50" />
+      <img
+        src="/gyoza.png"
+        alt="Gyoza"
+        className="mr-2 h-10 w-10 shrink-0 rounded-full opacity-95"
+      />
+
       <CommandPrimitive.Input
         ref={ref}
         className={cn(
@@ -122,7 +126,7 @@ const CommandItem = React.forwardRef<
   <CommandPrimitive.Item
     ref={ref}
     className={cn(
-      'cursor-pointer relative flex select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none aria-selected:bg-accent aria-selected:text-accent-foreground data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50',
+      'cursor-pointer relative flex select-none items-center rounded-lg px-2 py-1.5 text-sm outline-none aria-selected:bg-accent aria-selected:text-accent-foreground data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50',
       className
     )}
     {...props}

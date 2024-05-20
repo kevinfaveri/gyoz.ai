@@ -11,6 +11,7 @@ import { chatStream } from '~/clients/ai-inference'
 import { nanoid } from 'nanoid'
 import { executeActionPayload, useActionsAgents } from '~/agents/actions'
 import type { ToolUseBlock } from '@anthropic-ai/sdk/resources/beta/tools/messages'
+import { twMerge } from 'tailwind-merge'
 
 const ActionBar = () => {
   const [command, setCommand] = React.useState('')
@@ -87,10 +88,24 @@ const ActionBar = () => {
 
   return (
     <div className="w-full flex justify-center">
-      <Command className="shadow-inner shadow-primary" filter={filterFnCB}>
+      <Command
+        className="shadow-lg shadow-primary border-t-2 border-primary rounded-2xl relative w-full overflow-visible"
+        filter={filterFnCB}
+      >
+        <CommandInput
+          ref={commandInputRef}
+          placeholder="Ask about something you want to do or information you need"
+          autoFocus
+          value={command}
+          onValueChange={setCommand}
+          name="prompt"
+          disabled={isLoading}
+        />
         <CommandList
-          hidden={command.length === 0}
-          className="border-b max-h-28 border-dotted py-1 absolute left-0 rounded-lg bg-background right-0 bottom-24 shadow-inner shadow-primary"
+          className={twMerge(
+            'border-b max-h-28 border-dotted py-1 w-full rounded-lg bg-background shadow-inner shadow-primary absolute z-10 top-[66px] animate-in',
+            command.length > 0 ? 'block' : 'hidden'
+          )}
         >
           {quickActions}
           <CommandItem
@@ -102,15 +117,6 @@ const ActionBar = () => {
             <span>Talk to Gyoza OS</span>
           </CommandItem>
         </CommandList>
-        <CommandInput
-          ref={commandInputRef}
-          placeholder="Ask about something you want to do or information you need"
-          autoFocus
-          value={command}
-          onValueChange={setCommand}
-          name="prompt"
-          disabled={isLoading}
-        />
       </Command>
     </div>
   )

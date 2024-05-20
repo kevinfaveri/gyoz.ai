@@ -1,6 +1,5 @@
 import { type MetaFunction } from '@remix-run/node'
 import ActionBar from '~/components/features/actionbar'
-import { Chatbox } from '~/components/features/chatbox/chatbox'
 import Topbar from '~/components/features/topbar'
 import { ChatStateProvider } from '~/hooks/useChatState'
 
@@ -9,20 +8,21 @@ export const meta: MetaFunction = () => {
     { title: 'Gyoza OS' },
     {
       name: 'description',
-      content: 'Chat around, find out. DeFi made simple.',
+      content: 'Ask around, find out. DeFi made simple.',
     },
   ]
 }
 
 export default function Index() {
   return (
-    <div>
+    <div className="h-full">
       <ChatStateProvider>
-        <div className="flex justify-center">
+        <div className="flex justify-center h-full">
           <Topbar />
-          <div className="absolute bottom-0 w-[70%] flex flex-col justify-center">
-            <Chatbox />
-            <ActionBar />
+          <div className="w-[70%] flex flex-col items-center justify-center">
+            <div className="w-[50%] flex flex-col items-center justify-center">
+              <ActionBar />
+            </div>
           </div>
         </div>
       </ChatStateProvider>
